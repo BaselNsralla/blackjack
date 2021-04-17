@@ -4,20 +4,21 @@
 std::string card_string(CardValue const& val, std::string&& shape) 
 {   
     std::ostringstream oss;
+    oss << '|';
     switch (val)
     {
-    case 1 : oss << "Ace";
+    case 1 : oss << "A";
         break;
-    case 11: oss << "Jack";
+    case 11: oss << "J";
         break;
-    case 12: oss << "Queen";
+    case 12: oss << "Q";
         break;
-    case 13: oss << "King";
+    case 13: oss << "K";
         break;
     default:
         oss << val;
     }
-    oss << " Of " << shape;
+    oss << " " << shape << '|';
     return oss.str();
 }
 

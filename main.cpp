@@ -13,8 +13,8 @@ int main() {
     Deck deck{true};
     Dealer dealer{deck};
     Player player(1337);
-    player.addCard(deck[0]);
-    player.addCard(deck[1]);
+    //player.addCard(deck[0]);
+    //player.addCard(deck[1]);
     Blackjack bj(Interface{}, &dealer, &player);
     bj.play();
     std::cout << player.calculate() << std::endl;

@@ -25,9 +25,15 @@ Card* Deck::operator[](int index) const
     return cards[index];
 }
 
+void Deck::rotateLeft()
+{
+    std::rotate(cards.begin(), cards.begin() + 1, cards.end());
+}
+
 Deck::~Deck() 
 {
-    for (Card* card: cards) {
+    for (Card* card: cards) 
+    {
         delete card;
     }
 }

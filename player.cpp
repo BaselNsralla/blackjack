@@ -1,8 +1,10 @@
 #include "player.hpp"
+#include <sstream>
 
-Player::Player(int money): money{money} {}
 
-int Player::balance() const {
+Player::Player(float money): money{money} {}
+
+float Player::balance() const {
     return this->money;
 }
 
@@ -22,18 +24,40 @@ void Player::reset()
   I would create another .hpp file just for that
 */
 std::string Player::draw() const 
-{
-    return "( ͡° ͜ʖ ͡°)"; // noramal state
+{   
+    std::ostringstream oss;
+
+    oss << face() << ' '; // normal state
+    for (Card const* card: cards) {
+        oss << card->draw() << ' ';
+    }
+
+    CardValue value = calculate();
+    if (value != 0) 
+    {
+        oss << "(" << value << ")";
+    }
+    return oss.str();
 }
 
-CardValue Player::calculate() 
+std::string Player::face() const
+{
+    return "( ͡° ͜ʖ ͡°)";
+}
+
+CardValue Player::calculate() const
 {
     return std::reduce(std::execution::par, cards.begin(), cards.end(), 0, [](int const init, Card const* const card) {
         return init + card->getJackValue();
     });
 }
 
-void Player::decreaseBalance(int money)
+void Player::decreaseBalance(float money)
 {
     this->money -= money;
+}
+
+void Player::increaseBalance(float money) 
+{
+    this->money += money;
 }

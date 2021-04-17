@@ -25,14 +25,12 @@ void card_string(ostream& os, CardValue const& val, std::string&& shape);
 struct HeartCard: public Card 
 {
     using Card::Card;
-private:
     std::string draw() const override;
 };
 
 struct SpadeCard: public Card 
 {
     using Card::Card;
-private:
     std::string draw() const override;
 
 };
@@ -40,14 +38,12 @@ private:
 struct DiamondCard: public Card 
 {
     using Card::Card;
-private:
     std::string draw() const override;
 };
 
 struct ClubCard: public Card 
 {
     using Card::Card;
-private:
     std::string draw() const override;
 };
 

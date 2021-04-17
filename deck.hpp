@@ -26,6 +26,7 @@ public:
     Deck(bool shuffled);
     ~Deck();
     Card* operator[](int index) const;
+    void rotateLeft();
 };
 
 template<typename CardType>

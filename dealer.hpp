@@ -4,7 +4,9 @@
 class Dealer: public Player 
 {
 private:
-    Deck const& deck;
+    Deck& deck;
 public:
-    Dealer(Deck const& deck);
+    Dealer(Deck& deck);
+    Card* deal();
+    std::string face() const override;
 };

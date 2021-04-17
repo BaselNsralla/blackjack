@@ -28,13 +28,30 @@ class Blackjack
     PlayerContainer players;
     Dealer* dealer;
     Interface interface;
+    PlayerContainer prepick;
+    PlayerContainer stayer;
+    PlayerContainer busted;
+    PlayerContainer blackjacker;
     std::map<intptr_t, float> round_bets; // Not the best id, but it works for now.
+    
+    // Game phases
     void betPhase();
     void cardPhase();
-    CardValue dealerCards();
+    void resultPhase();
+    
+    // Card dealing
+    void initialCards();
+    void dealerCards();
+    void playerCards();
+
+    // Result Aux
     void bust(Player* player);
     void win(Player* player, bool bj = false);
     void draw(Player* player);
+
+    // Card Aux
+    bool hasBlackjack(Player* player); 
+
 public:
     template<typename... Args>
     Blackjack(Interface&& interface, Dealer* dealer, Args... args): 
@@ -46,7 +63,22 @@ public:
     void play();
 };
 
-CardValue Blackjack::dealerCards() 
+void Blackjack::initialCards()
+{
+    // ======= Pre Choice =======
+    for (int i = 0; i < 2; ++i) 
+    {
+        for (Player* player: prepick) 
+        {
+            Card* card = dealer->deal();
+            player->addCard(card);
+        }
+        Card* card = dealer->deal();
+        dealer->addCard(card);
+    }
+}
+
+void Blackjack::dealerCards() 
 {
     CardValue dealerValue{dealer->calculate()};
     while(dealerValue < BJ_TARGET)
@@ -54,18 +86,74 @@ CardValue Blackjack::dealerCards()
         Card* card = dealer->deal();
         dealer->addCard(card);
         dealerValue = dealer->calculate();
-        std::cout << dealer->draw() << std::endl;
     }
-    return dealerValue;
+    std::cout << dealer->draw() << std::endl;
 }
 
-void Blackjack::bust(Player* player) 
+bool Blackjack::hasBlackjack(Player* player) 
 {
-    float roundBet = round_bets[reinterpret_cast<intptr_t>(player)];
-    round_bets[reinterpret_cast<intptr_t>(player)] = 0;
-    interface.showBust(player, roundBet);
-    player->reset();
+    CardValue currentVal = player->calculate();
+    bool didBj   = currentVal == BJ_WIN;
+        
+    if(didBj) 
+    {
+        blackjacker.push_back(player);
+    }
+
+    return didBj;    
+    
 }
+
+void Blackjack::playerCards() 
+{
+    stayer = filter<Player*>(prepick, [&](Player* player) {
+        bool didBj = hasBlackjack(player);
+        bool didBust = false;
+        while (!didBj && !didBust && !interface.stayAsk(player)) 
+        {
+            Card* card = dealer->deal();
+            player->addCard(card);
+            didBj   =  hasBlackjack(player);
+            didBust = player->calculate() > BJ_WIN;
+            if(didBust) 
+            {
+                busted.push_back(player);
+            }
+        } 
+
+        return !(didBust || didBj);        
+    });
+}
+
+
+void Blackjack::resultPhase()
+{
+    CardValue dealerValue = dealer->calculate();
+    std::for_each(stayer.begin(), stayer.end(), [&, this](Player* player) {
+        CardValue playerValue = player->calculate();
+        bool dealerBust = dealerValue > BJ_WIN || playerValue > dealerValue;
+        if (dealerBust)  
+        {
+            win(player);
+        } else if (playerValue < dealerValue) 
+        {       
+            bust(player);
+        } else 
+        {
+            draw(player);
+        }
+
+    });
+
+    std::for_each(busted.begin(), busted.end(), [this](Player* player) {
+        this->bust(player);
+    });
+
+    std::for_each(blackjacker.begin(), blackjacker.end(), [this](Player* player) {
+        this->win(player, true);
+    });
+}
+
 
 void Blackjack::win(Player* player, bool bj) 
 {
@@ -78,6 +166,14 @@ void Blackjack::win(Player* player, bool bj)
     player->reset();
 }
 
+void Blackjack::bust(Player* player) 
+{
+    float roundBet = round_bets[reinterpret_cast<intptr_t>(player)];
+    round_bets[reinterpret_cast<intptr_t>(player)] = 0;
+    interface.showBust(player, roundBet);
+    player->reset();
+}
+
 void Blackjack::draw(Player* player) 
 {
     float roundBet = round_bets[reinterpret_cast<intptr_t>(player)];
@@ -87,100 +183,12 @@ void Blackjack::draw(Player* player)
     player->reset();
 }
 
-
-
-void Blackjack::cardPhase() {
-
+void Blackjack::cardPhase() 
+{
     // i don't like this method, but will stick to it for now
-    std::vector<Player*> prePick = players;
-    std::vector<Player*> bust;
-    std::vector<Player*> blackjack;
-
-    // ======= Pre Choice =======
-    for (int i = 0; i < 2; ++i) 
-    {
-        for (Player* player: prePick) 
-        {
-            Card* card = dealer->deal();
-            player->addCard(card);
-        }
-        Card* card = dealer->deal();
-        dealer->addCard(card);
-    }
-    
-    // auto stayers = prePick | filter([&](Player* player) {
-    //     CardValue currentVal = player->calculate();
-    //     bool didBj   = currentVal == BJ_WIN;
-    //     if(didBj) 
-    //     {
-    //         blackjack.push_back(player);
-    //         return false;
-    //     }
-        
-    //     bool didBust = false;
-    //     while (!interface.stayAsk(player)) 
-    //     {
-    //         Card* card = dealer->deal();
-    //         player->addCard(card);
-    //         didBust = currentVal > BJ_WIN;
-    //         if(didBust) 
-    //         {
-    //             bust.push_back(player);
-    //         }
-    //     } 
-
-    //     return !(didBust || didBj);        
-    // });
-
-    auto stayers = filter<Player*>(prePick, [&](Player* player) {
-        CardValue currentVal = player->calculate();
-        bool didBj   = currentVal == BJ_WIN;
-        if(didBj) 
-        {
-            blackjack.push_back(player);
-            return false;
-        }
-        
-        bool didBust = false;
-        while (!interface.stayAsk(player)) 
-        {
-            Card* card = dealer->deal();
-            player->addCard(card);
-            didBust = currentVal > BJ_WIN;
-            if(didBust) 
-            {
-                bust.push_back(player);
-            }
-        } 
-
-        return !(didBust || didBj);        
-    });
-
-    CardValue dealerValue = dealerCards();
-
-    std::for_each(stayers.begin(), stayers.end(), [&, this](Player* player) {
-        CardValue playerValue = player->calculate();
-        if (playerValue > dealerValue) 
-        {
-            this->win(player);
-        } else if (playerValue < dealerValue)
-        {
-            this->bust(player);
-        } else 
-        {
-            this->draw(player);
-        }
-
-    });
-
-    std::for_each(bust.begin(), bust.end(), [this](Player* player) {
-        this->bust(player);
-    });
-
-    std::for_each(blackjack.begin(), blackjack.end(), [this](Player* player) {
-        this->win(player, true);
-    });
-
+    initialCards();
+    playerCards();
+    dealerCards();
 }
 
 void Blackjack::betPhase() 
@@ -194,18 +202,27 @@ void Blackjack::betPhase()
 
         while(betMoney > playerBalance)
         {
-            std::cout << "VA? " << std::endl;
             interface.noMoneyWarn(playerBalance);
             betMoney = interface.askBet(player);
         } 
 
         player->decreaseBalance(betMoney);
         round_bets[reinterpret_cast<intptr_t>(player)] = betMoney;
+        prepick.push_back(player);
     }
 }
 
 void Blackjack::play()
 {
-    betPhase();
-    cardPhase();
+    while(true)
+    {
+        stayer.clear();
+        busted.clear();
+        blackjacker.clear();
+        //prepick = players;
+        betPhase();
+        if (prepick.empty()) { break; }
+        cardPhase();
+        resultPhase();
+    }
 }

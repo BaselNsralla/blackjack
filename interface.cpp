@@ -37,8 +37,8 @@ bool Interface::stayAsk(Drawable* drawable) const
               << std::endl;
     
 
-    int choice = numberInput<int>([](int num) { return num > 0 && num < 2; });
-    return choice < 2;
+    int choice = numberInput<int>([](int num) { return num > 0 && num < 3; });
+    return choice > 1;
 }
 
 

@@ -12,11 +12,11 @@ Deck::Deck(bool shuffled)
         std::shuffle(cards.begin(), cards.end(), std::random_device());
     }
 
-    for (auto& a: cards) 
-    {
-        //std::cout << a->getJackValue() << std::endl;
-        std::cout << *a << std::endl;
-    }
+    // print the deck
+    // for (auto& a: cards) 
+    // {
+    //     std::cout << *a << std::endl;
+    // }
 
 }
 

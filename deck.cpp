@@ -12,17 +12,21 @@ Deck::Deck(bool shuffled)
         std::shuffle(cards.begin(), cards.end(), std::random_device());
     }
 
-    // for (auto& a: cards) 
-    // {
-    //     std::cout << a->getJackValue() << std::endl;
-    // }
+    for (auto& a: cards) 
+    {
+        //std::cout << a->getJackValue() << std::endl;
+        std::cout << *a << std::endl;
+    }
+
 }
 
-Card* Deck::operator[](int index) const {
+Card* Deck::operator[](int index) const 
+{
     return cards[index];
 }
 
-Deck::~Deck() {
+Deck::~Deck() 
+{
     for (Card* card: cards) {
         delete card;
     }

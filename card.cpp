@@ -1,26 +1,29 @@
 #include "card.hpp"
-
-void print_card(ostream& os, CardValue const& val, std::string&& shape) 
-{
+#include <sstream>
+// This return will be moved so no worries.
+std::string card_string(CardValue const& val, std::string&& shape) 
+{   
+    std::ostringstream oss;
     switch (val)
     {
-    case 1 : os << "Ace";
+    case 1 : oss << "Ace";
         break;
-    case 11: os << "Jack";
+    case 11: oss << "Jack";
         break;
-    case 12: os << "Queen";
+    case 12: oss << "Queen";
         break;
-    case 13: os << "King";
+    case 13: oss << "King";
         break;
     default:
-        os << val;
+        oss << val;
     }
-    os << " Of " << shape;
+    oss << " Of " << shape;
+    return oss.str();
 }
 
 std::ostream& operator<< (std::ostream& os, Card const& card) 
 {
-    card.print(os); 
+    os << card.draw();
     return os;
 }
 
@@ -31,23 +34,23 @@ CardValue Card::getJackValue() const
 
 Card::Card(CardValue value): value{value} {}
 
-void HeartCard::print(ostream& os) const
+std::string HeartCard::draw() const
 {
-    print_card(os, this->value, "♥");
+    return card_string(this->value, "♥");
 }
 
-void SpadeCard::print(ostream& os) const
+std::string SpadeCard::draw() const
 {
-    print_card(os, this->value, "♠");
+    return card_string(this->value, "♠");
 }
 
-void DiamondCard::print(ostream& os) const
+std::string DiamondCard::draw() const
 {
-    print_card(os, this->value, "♦");
+    return card_string(this->value, "♦");
 }
 
-void ClubCard::print(ostream& os) const
+std::string ClubCard::draw() const
 {
-    print_card(os, this->value, "♣");
+    return card_string(this->value, "♣");
 }
 

@@ -35,6 +35,7 @@ class Blackjack
     std::map<intptr_t, float> round_bets; // Not the best id, but it works for now.
     
     // Game phases
+    void preparePhase();
     void betPhase();
     void cardPhase();
     void resultPhase();
@@ -63,6 +64,79 @@ public:
     void play();
 };
 
+void Blackjack::preparePhase()
+{
+    dealer->reset();
+    interface.roundStart();
+    for (auto player: players) 
+    {
+        player->reset();
+        interface.character(player);
+    }
+    std::cout << std::endl;
+    stayer.clear();
+    busted.clear();
+    blackjacker.clear();
+    prepick.clear();
+}
+
+void Blackjack::betPhase() 
+{
+    for (Player* player: players) 
+    {
+        float playerBalance = player->balance();
+        if (playerBalance == 0) continue;
+
+        float betMoney = interface.askBet(player);
+
+        while(betMoney > playerBalance)
+        {
+            interface.noMoneyWarn(playerBalance);
+            betMoney = interface.askBet(player);
+        } 
+
+        player->decreaseBalance(betMoney);
+        round_bets[reinterpret_cast<intptr_t>(player)] = betMoney;
+        prepick.push_back(player);
+    }
+}
+
+void Blackjack::cardPhase() 
+{
+    // i don't like this method, but will stick to it for now
+    initialCards();
+    playerCards();
+    dealerCards();
+}
+
+void Blackjack::resultPhase()
+{
+    CardValue dealerValue = dealer->calculate();
+    std::for_each(stayer.begin(), stayer.end(), [&, this](Player* player) {
+        CardValue playerValue = player->calculate();
+        bool dealerBust = dealerValue > BJ_WIN || playerValue > dealerValue;
+        if (dealerBust)  
+        {
+            win(player);
+        } else if (playerValue < dealerValue) 
+        {       
+            bust(player);
+        } else 
+        {
+            draw(player);
+        }
+
+    });
+
+    std::for_each(busted.begin(), busted.end(), [this](Player* player) {
+        this->bust(player);
+    });
+
+    std::for_each(blackjacker.begin(), blackjacker.end(), [this](Player* player) {
+        this->win(player, true);
+    });
+}
+
 void Blackjack::initialCards()
 {
     // ======= Pre Choice =======
@@ -87,7 +161,8 @@ void Blackjack::dealerCards()
         dealer->addCard(card);
         dealerValue = dealer->calculate();
     }
-    std::cout << dealer->draw() << std::endl;
+    interface.character(dealer);
+    std::cout << std::endl;
 }
 
 bool Blackjack::hasBlackjack(Player* player) 
@@ -125,36 +200,6 @@ void Blackjack::playerCards()
     });
 }
 
-
-void Blackjack::resultPhase()
-{
-    CardValue dealerValue = dealer->calculate();
-    std::for_each(stayer.begin(), stayer.end(), [&, this](Player* player) {
-        CardValue playerValue = player->calculate();
-        bool dealerBust = dealerValue > BJ_WIN || playerValue > dealerValue;
-        if (dealerBust)  
-        {
-            win(player);
-        } else if (playerValue < dealerValue) 
-        {       
-            bust(player);
-        } else 
-        {
-            draw(player);
-        }
-
-    });
-
-    std::for_each(busted.begin(), busted.end(), [this](Player* player) {
-        this->bust(player);
-    });
-
-    std::for_each(blackjacker.begin(), blackjacker.end(), [this](Player* player) {
-        this->win(player, true);
-    });
-}
-
-
 void Blackjack::win(Player* player, bool bj) 
 {
     float multiplier = bj ? 2.5 : 2;
@@ -163,7 +208,6 @@ void Blackjack::win(Player* player, bool bj)
     round_bets[reinterpret_cast<intptr_t>(player)] = 0;
     interface.showWin(player, pot);
     player->increaseBalance(pot);
-    player->reset();
 }
 
 void Blackjack::bust(Player* player) 
@@ -171,7 +215,6 @@ void Blackjack::bust(Player* player)
     float roundBet = round_bets[reinterpret_cast<intptr_t>(player)];
     round_bets[reinterpret_cast<intptr_t>(player)] = 0;
     interface.showBust(player, roundBet);
-    player->reset();
 }
 
 void Blackjack::draw(Player* player) 
@@ -180,46 +223,15 @@ void Blackjack::draw(Player* player)
     round_bets[reinterpret_cast<intptr_t>(player)] = 0;
     interface.showWin(player, roundBet);
     player->increaseBalance(roundBet);
-    player->reset();
 }
 
-void Blackjack::cardPhase() 
-{
-    // i don't like this method, but will stick to it for now
-    initialCards();
-    playerCards();
-    dealerCards();
-}
-
-void Blackjack::betPhase() 
-{
-    for (Player* player: players) 
-    {
-        float playerBalance = player->balance();
-        if (playerBalance == 0) continue;
-
-        float betMoney = interface.askBet(player);
-
-        while(betMoney > playerBalance)
-        {
-            interface.noMoneyWarn(playerBalance);
-            betMoney = interface.askBet(player);
-        } 
-
-        player->decreaseBalance(betMoney);
-        round_bets[reinterpret_cast<intptr_t>(player)] = betMoney;
-        prepick.push_back(player);
-    }
-}
 
 void Blackjack::play()
 {
+    std::cin.putback ('\n'); // hack
     while(true)
     {
-        stayer.clear();
-        busted.clear();
-        blackjacker.clear();
-        //prepick = players;
+        preparePhase();
         betPhase();
         if (prepick.empty()) { break; }
         cardPhase();

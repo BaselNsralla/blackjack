@@ -2,6 +2,7 @@
 #include <sstream>
 #include "interface.hpp"
 #include <limits>
+#include <vector>
 #include <iostream>
 using std::ostringstream;
 
@@ -12,7 +13,7 @@ float Interface::askBet(Drawable* drawable) const
     ostringstream oss;
     oss << "----------------------------" << '\n';
     oss << "How much do you want to bet?" << '\n';
-    oss << drawable->draw() << '\n';
+    oss << drawable->draw();
     std::cout << oss.str() << std::endl;
     float value = numberInput<float>();
     return value;
@@ -44,8 +45,7 @@ bool Interface::stayAsk(Drawable* drawable) const
 
 void Interface::showBust(Drawable* drawable, float value) const
 {
-    std::cout << "------------------\n"
-              << drawable->draw()
+    std::cout << drawable->draw()
               << ' '
               << "Busted with " 
               << value 
@@ -56,8 +56,7 @@ void Interface::showBust(Drawable* drawable, float value) const
 
 void Interface::showWin(Drawable* drawable, float value) const
 {
-    std::cout << "------------------\n"
-              << drawable->draw()
+    std::cout << drawable->draw()
               << ' '
               << "Win!!!  "
               << "Pot: " 
@@ -68,12 +67,27 @@ void Interface::showWin(Drawable* drawable, float value) const
 
 void Interface::moneyBack(Drawable* drawable, float value) const
 {
-    std::cout << "------------------\n"
-              << drawable->draw()
+    std::cout << drawable->draw()
               << ' '
               << "Draw "
               << "Pot: " 
               << value 
               << "$"
               << std::endl;
+}
+
+void Interface::roundStart()
+{
+    std::cout << "\nPress Enter to start a new round...\n";
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    getchar();
+
+    std::cout<< "\033[2J\033[1;1H"; 
+    std::cout << "\n=========New Round=========" << std::endl;
+}
+
+void Interface::character(Drawable* drawable)
+{
+    std::cout << drawable->draw();
 }

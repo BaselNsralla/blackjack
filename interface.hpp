@@ -3,7 +3,10 @@
 #include "drawable.hpp"
 #include <string>
 #include <functional>
+#include <vector>
+#include <stdio.h>
 
+using DrawableContainer = std::vector<Drawable*>;
 using std::ostream;
 using std::string;
 
@@ -15,6 +18,8 @@ struct Interface
     void showBust(Drawable* drawable, float value) const;
     void showWin(Drawable* drawable, float value) const;
     void moneyBack(Drawable* drawable, float value) const;
+    void character(Drawable*);
+    void roundStart();
 
 private:
     template<typename T> 

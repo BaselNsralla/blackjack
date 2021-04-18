@@ -15,5 +15,5 @@ Card* Dealer::deal()
 
 std::wstring Dealer::face() const
 {
-    return L"😒";//"😊";
+    return L"😄";
 }

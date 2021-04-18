@@ -5,10 +5,10 @@
 #include <functional>
 #include <vector>
 #include <stdio.h>
-
+using namespace std::string_literals;
 using DrawableContainer = std::vector<Drawable*>;
 using std::ostream;
-using std::string;
+using std::wstring;
 
 struct Interface 
 {
@@ -40,7 +40,7 @@ T Interface::numberInput(std::function<bool(T)> predicate) const
         if (!std::cin.fail() && predicate(num)) break;
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Please enter a valid number" << std::endl;
+        std::wcout << L"Please enter a valid number" << std::endl;
     }
     return num;
 }

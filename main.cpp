@@ -8,6 +8,7 @@
 
 int main() 
 {
+    std::setlocale(LC_ALL, "");
     Deck deck{true};
     Dealer dealer{deck};
     Player player(1337);

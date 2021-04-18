@@ -16,36 +16,36 @@ public:
     friend std::ostream& operator<< (std::ostream& os, Card const& card);
 protected:
     CardValue const value;  
-    std::string info() const override; 
+    std::wstring info() const override; 
 };
 
 std::ostream& operator<< (std::ostream& os, Card const& card);
 
-void card_string(ostream& os, CardValue const& val, std::string&& shape);
+void card_string(ostream& os, CardValue const& val, std::wstring&& shape);
 
 struct HeartCard: public Card 
 {
     using Card::Card;
-    std::string draw() const override;
+    std::wstring draw() const override;
 };
 
 struct SpadeCard: public Card 
 {
     using Card::Card;
-    std::string draw() const override;
+    std::wstring draw() const override;
 
 };
 
 struct DiamondCard: public Card 
 {
     using Card::Card;
-    std::string draw() const override;
+    std::wstring draw() const override;
 };
 
 struct ClubCard: public Card 
 {
     using Card::Card;
-    std::string draw() const override;
+    std::wstring draw() const override;
 };
 
 

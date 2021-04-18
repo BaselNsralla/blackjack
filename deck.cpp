@@ -15,7 +15,7 @@ Deck::Deck(bool shuffled)
     // print the deck
     // for (auto& a: cards) 
     // {
-    //     std::cout << *a << std::endl;
+    //     std::wcout << *a << std::endl;
     // }
 
 }

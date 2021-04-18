@@ -8,5 +8,5 @@ private:
 public:
     Dealer(Deck& deck);
     Card* deal();
-    std::string face() const override;
+    std::wstring face() const override;
 };

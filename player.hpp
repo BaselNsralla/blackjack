@@ -16,8 +16,8 @@ public:
     void decreaseBalance(float);
     void increaseBalance(float);
     float balance() const;
-    virtual std::string face() const;
-    virtual std::string draw() const override;
-    virtual std::string info() const override;
+    virtual std::wstring face() const;
+    virtual std::wstring draw() const override;
+    virtual std::wstring info() const override;
     CardValue calculate() const;
 };

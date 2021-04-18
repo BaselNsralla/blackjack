@@ -3,6 +3,6 @@
 
 struct Drawable 
 {
-    virtual std::string draw() const = 0;
-    virtual std::string info() const = 0;
+    virtual std::wstring draw() const = 0;
+    virtual std::wstring info() const = 0;
 };

@@ -4,17 +4,17 @@
 #include <limits>
 #include <vector>
 #include <iostream>
-using std::ostringstream;
-
+using std::wostringstream;
+using namespace std::string_literals;
 
 
 float Interface::askBet(Drawable* drawable) const
 {
-    ostringstream oss;
-    oss << "----------------------------" << '\n';
-    oss << "How much do you want to bet?" << '\n';
+    wostringstream oss;
+    oss << L"----------------------------" << L'\n';
+    oss << L"How much do you want to bet?" << L'\n';
     oss << drawable->draw();
-    std::cout << oss.str() << std::endl;
+    std::wcout << oss.str() << std::endl;
     float value = numberInput<float>();
     return value;
 }
@@ -22,19 +22,19 @@ float Interface::askBet(Drawable* drawable) const
 
 void Interface::noMoneyWarn(float balance) const
 {
-    std::cout << "Insufficient Funds " << "your balance is: " 
-              << balance << '$' 
+    std::wcout << L"Insufficient Funds " << "your balance is: " 
+              << balance << L'$' 
               << std::endl;
 }
 
 bool Interface::stayAsk(Drawable* drawable) const
 {
     
-    std::cout << "------------------\n"
+    std::wcout << "------------------\n"
               << drawable->draw() << '\n'
-              << "Do you want to \n" 
-              << "1. Hit \n"
-              << "2. Stay \n"
+              << L"Do you want to \n" 
+              << L"1. Hit \n"
+              << L"2. Stay \n"
               << std::endl;
     
 
@@ -45,54 +45,54 @@ bool Interface::stayAsk(Drawable* drawable) const
 
 void Interface::showBust(Drawable* drawable, float value) const
 {
-    std::cout << drawable->draw()
-              << ' '
-              << "Busted with " 
+    std::wcout << drawable->draw()
+              << L' '
+              << L"Busted with " 
               << value 
-              << "$"
+              << L"$"
               << std::endl;
 }
 
 
 void Interface::showWin(Drawable* drawable, float value) const
 {
-    std::cout << drawable->draw()
-              << ' '
-              << "Win!!!  "
-              << "Pot: " 
+    std::wcout << drawable->draw()
+              << L' '
+              << L"Win!!!  "
+              << L"Pot: " 
               << value 
-              << "$"
+              << L"$"
               << std::endl;
 }
 
 void Interface::moneyBack(Drawable* drawable, float value) const
 {
-    std::cout << drawable->draw()
-              << ' '
-              << "Draw "
-              << "Pot: " 
+    std::wcout << drawable->draw()
+              << L' '
+              << L"Draw "
+              << L"Pot: " 
               << value 
-              << "$"
+              << L"$"
               << std::endl;
 }
 
 void Interface::roundStart()
 {
-    std::cout << "\nPress Enter to start a new round...\n";
+    std::wcout << L"\nPress Enter to start a new round...\n";
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
     getchar();
 
-    std::cout<< "\033[2J\033[1;1H"; 
-    std::cout << "\n=========New Round=========" << std::endl;
+    std::wcout<< L"\033[2J\033[1;1H"; 
+    std::wcout << L"\n=========New Round=========" << std::endl;
 }
 
 void Interface::characterInfo(Drawable* player)
 {
-    std::cout << player->info();
+    std::wcout << player->info();
 }
 
 void Interface::character(Drawable* player)
 {
-    std::cout << player->draw();
+    std::wcout << player->draw();
 }

@@ -73,7 +73,7 @@ void Blackjack::preparePhase()
         player->reset();
         interface.characterInfo(player);
     }
-    std::cout << std::endl;
+    std::wcout << std::endl;
     stayer.clear();
     busted.clear();
     blackjacker.clear();
@@ -162,7 +162,7 @@ void Blackjack::dealerCards()
         dealerValue = dealer->calculate();
     }
     interface.character(dealer);
-    std::cout << std::endl;
+    std::wcout << std::endl;
 }
 
 bool Blackjack::hasBlackjack(Player* player) 

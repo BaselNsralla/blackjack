@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include <sstream>
-
+#include <iomanip>
+using namespace std::string_literals;
 
 Player::Player(float money): money{money} {}
 
@@ -23,32 +24,39 @@ void Player::reset()
   In case i would need to draw the player in different contextes or different ways
   I would create another .hpp file just for that
 */
-std::string Player::draw() const 
+std::wstring Player::draw() const 
 {   
-    std::ostringstream oss;
+    std::wostringstream oss;
 
-    oss << face() << ' '; // normal state
+    oss << std::setw(5) << std::left << std::fixed << face(); // normal state
+    //oss.unsetf ( std::ios::showbase );
+
+    std::wostringstream cardsOss;
     for (Card const* card: cards) {
-        oss << card->draw() << ' ';
+        cardsOss << card->draw() << L' ';
     }
-
+    oss << std::setfill(L'.') << std::setw(45) << std::left << std::fixed << cardsOss.str();   
+    //oss << std::resetiosflags(std::ios::showbase);
+    
     CardValue value = calculate();
+    std::wostringstream valOss;
     if (value != 0) 
     {
-        oss << "(" << value << ")";
+        valOss << L"(" << value << L")";
     }
+    oss << std::setw(5) << std::right << std::fixed << valOss.str(); 
     return oss.str();
 }
 
-std::string Player::info() const {
-    std::ostringstream oss;
-    oss << face() << balance() << '$';
+std::wstring Player::info() const {
+    std::wostringstream oss;
+    oss << face() << balance() << L"$\t";
     return oss.str();
 }
 
-std::string Player::face() const
+std::wstring Player::face() const
 {
-    return "( ͡° ͜ʖ ͡°)";
+    return L"😒";
 }
 
 CardValue Player::calculate() const

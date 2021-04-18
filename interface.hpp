@@ -18,6 +18,7 @@ struct Interface
     void showBust(Drawable* drawable, float value) const;
     void showWin(Drawable* drawable, float value) const;
     void moneyBack(Drawable* drawable, float value) const;
+    void characterInfo(Drawable*);
     void character(Drawable*);
     void roundStart();
 

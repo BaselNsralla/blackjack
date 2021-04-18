@@ -16,6 +16,7 @@ public:
     friend std::ostream& operator<< (std::ostream& os, Card const& card);
 protected:
     CardValue const value;  
+    std::string info() const override; 
 };
 
 std::ostream& operator<< (std::ostream& os, Card const& card);

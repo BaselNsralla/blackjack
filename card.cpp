@@ -28,6 +28,12 @@ std::ostream& operator<< (std::ostream& os, Card const& card)
     return os;
 }
 
+std::string Card::info() const {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
 CardValue Card::getJackValue() const 
 {
     return value == 1 ? 11 : std::min<size_t>(10, value); 

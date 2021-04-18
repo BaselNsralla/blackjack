@@ -18,5 +18,6 @@ public:
     float balance() const;
     virtual std::string face() const;
     virtual std::string draw() const override;
+    virtual std::string info() const override;
     CardValue calculate() const;
 };

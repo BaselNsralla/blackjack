@@ -87,7 +87,12 @@ void Interface::roundStart()
     std::cout << "\n=========New Round=========" << std::endl;
 }
 
-void Interface::character(Drawable* drawable)
+void Interface::characterInfo(Drawable* player)
 {
-    std::cout << drawable->draw();
+    std::cout << player->info();
+}
+
+void Interface::character(Drawable* player)
+{
+    std::cout << player->draw();
 }

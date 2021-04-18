@@ -40,6 +40,12 @@ std::string Player::draw() const
     return oss.str();
 }
 
+std::string Player::info() const {
+    std::ostringstream oss;
+    oss << face() << balance() << '$';
+    return oss.str();
+}
+
 std::string Player::face() const
 {
     return "( ͡° ͜ʖ ͡°)";
@@ -61,3 +67,4 @@ void Player::increaseBalance(float money)
 {
     this->money += money;
 }
+

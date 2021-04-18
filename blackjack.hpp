@@ -71,7 +71,7 @@ void Blackjack::preparePhase()
     for (auto player: players) 
     {
         player->reset();
-        interface.character(player);
+        interface.characterInfo(player);
     }
     std::cout << std::endl;
     stayer.clear();

@@ -6,7 +6,7 @@ class Dealer: public Player
 private:
     Deck& deck;
 public:
-    Dealer(Deck& deck);
+    Dealer(Deck& deck, std::wstring);
     Card* deal();
-    std::wstring face() const override;
+    std::wstring appearance() const override;
 };

@@ -3,7 +3,7 @@
 #include "card.hpp"
 using namespace std::string_literals;
 
-Dealer::Dealer(Deck& deck): deck{deck}, Player::Player(std::numeric_limits<float>::max()) {}
+Dealer::Dealer(Deck& deck, std::wstring rep): deck{deck}, Player::Player(std::numeric_limits<float>::max(), rep) {}
 
 Card* Dealer::deal() 
 {
@@ -13,7 +13,7 @@ Card* Dealer::deal()
 }
 
 
-std::wstring Dealer::face() const
+std::wstring Dealer::appearance() const
 {
     return L"😄";
 }

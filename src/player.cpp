@@ -3,7 +3,8 @@
 #include <iomanip>
 using namespace std::string_literals;
 
-Player::Player(float money): money{money} {}
+Player::Player(float money, std::wstring illustration): money{money}, 
+                                                        illustration{illustration} {}
 
 float Player::balance() const {
     return this->money;
@@ -28,7 +29,7 @@ std::wstring Player::draw() const
 {   
     std::wostringstream oss;
 
-    oss << std::setw(3) << std::left << std::fixed << face(); // normal state
+    oss << std::setw(3) << std::left << std::fixed << appearance(); // normal state
 
     std::wostringstream cardsOss;
     for (Card const* card: cards) {
@@ -51,13 +52,13 @@ std::wstring Player::draw() const
 
 std::wstring Player::info() const {
     std::wostringstream oss;
-    oss << face() << balance() << L"$\t";
+    oss << appearance() << balance() << L"$\t";
     return oss.str();
 }
 
-std::wstring Player::face() const
+std::wstring Player::appearance() const
 {
-    return L"😒";
+    return illustration;
 }
 
 CardValue Player::calculate() const

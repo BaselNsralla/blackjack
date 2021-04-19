@@ -111,7 +111,6 @@ bool Blackjack::hasBlackjack(Player* player)
     }
 
     return didBj;    
-    
 }
 
 void Blackjack::playerCards() 

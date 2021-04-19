@@ -28,23 +28,24 @@ std::wstring Player::draw() const
 {   
     std::wostringstream oss;
 
-    oss << std::setw(5) << std::left << std::fixed << face(); // normal state
-    //oss.unsetf ( std::ios::showbase );
+    oss << std::setw(3) << std::left << std::fixed << face(); // normal state
 
     std::wostringstream cardsOss;
     for (Card const* card: cards) {
         cardsOss << card->draw() << L' ';
     }
     oss << std::setfill(L'.') << std::setw(45) << std::left << std::fixed << cardsOss.str();   
-    //oss << std::resetiosflags(std::ios::showbase);
     
     CardValue value = calculate();
     std::wostringstream valOss;
     if (value != 0) 
     {
-        valOss << L"(" << value << L")";
+        std::wstring valStr = value == 21 && cards.size() == 2 ? L"BALCKJACK" : std::to_wstring(value);
+        valOss << L"(" 
+               << valStr
+               << L")";
     }
-    oss << std::setw(5) << std::right << std::fixed << valOss.str(); 
+    oss << std::setw(10) << std::left << std::fixed << valOss.str(); 
     return oss.str();
 }
 
